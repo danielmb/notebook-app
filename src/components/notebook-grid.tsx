@@ -1,5 +1,5 @@
 import React from 'react';
-import { type Notebook } from './notebook-actions';
+import { type Notebook } from '../server/notebook';
 import {
   Card,
   CardContent,
@@ -8,11 +8,9 @@ import {
   CardFooter,
   CardHeader,
 } from './ui/card';
-import { MoreVerticalIcon } from 'lucide-react';
 import { FormatDate } from './format-date';
 import Link from 'next/link';
-import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
-import { Command, CommandGroup, CommandItem, CommandList } from './ui/command';
+import { NotebookEditOptions } from './notebook-edit-options';
 interface NotebookGridProps {
   notebooks: Notebook[];
 }
@@ -39,7 +37,7 @@ export const NotebookGrid = ({ notebooks }: NotebookGridProps) => {
                 <span>🥈</span>
               </div>
               <div className="">
-                <Popover>
+                {/* <Popover>
                   <PopoverTrigger>
                     <MoreVerticalIcon className="h-5 w-5" />
                   </PopoverTrigger>
@@ -53,7 +51,8 @@ export const NotebookGrid = ({ notebooks }: NotebookGridProps) => {
                       </CommandList>
                     </Command>
                   </PopoverContent>
-                </Popover>
+                </Popover> */}
+                <NotebookEditOptions notebook={notebook} />
               </div>
             </div>
           </CardHeader>

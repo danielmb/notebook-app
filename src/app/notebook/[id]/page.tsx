@@ -1,4 +1,4 @@
-import Notebook from '@/components/notebook';
+import Notebook from '@/components/notebook/notebook';
 import { getNotebook } from '@/server/notebook';
 import React from 'react';
 interface PageProps {
@@ -8,6 +8,7 @@ interface PageProps {
 }
 export const Page: React.FC<PageProps> = async ({ params }) => {
   const notebook = getNotebook((await params).id);
+
   return (
     <div>
       <Notebook notebook={notebook} />

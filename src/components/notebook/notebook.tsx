@@ -1,7 +1,7 @@
 'use client';
 import { SidebarClose, SidebarOpen } from 'lucide-react';
 import React, { use } from 'react';
-import { Button } from './ui/button';
+import { Button } from '../ui/button';
 import { cn } from '@/lib/utils';
 import {
   Dialog,
@@ -9,10 +9,11 @@ import {
   DialogDescription,
   DialogTitle,
   DialogTrigger,
-} from './ui/dialog';
-import AddSourceForm from './sources-form';
+} from '../ui/dialog';
+import AddSourceForm from '../sources-form';
 import Link from 'next/link';
 import { getNotebook } from '@/server/notebook';
+import { NotebookProvider, useNotebook } from './notebook-provider';
 interface TabProps {
   title: string;
 }
@@ -50,16 +51,20 @@ const Tab: React.FC<React.PropsWithChildren<TabProps>> = ({
 };
 
 const Sources = () => {
+  const { notebook } = useNotebook();
+  const [sourceFormOpen, setSourceFormOpen] = React.useState(
+    notebook.sources.length === 0,
+  );
   return (
     <div className="flex flex-col">
       <div className="flex flex-row justify-between">
-        <Dialog>
+        <Dialog
+          defaultOpen={notebook.sources.length === 0}
+          open={sourceFormOpen}
+          onOpenChange={setSourceFormOpen}
+        >
           <DialogTrigger asChild>
-            <Button
-              className="rounded-full w-full
-          "
-              variant={'outline'}
-            >
+            <Button className="rounded-full w-full" variant={'outline'}>
               New Source
             </Button>
           </DialogTrigger>
@@ -68,9 +73,19 @@ const Sources = () => {
             <DialogDescription>
               Add a new source to your notebook.
             </DialogDescription>
-            <AddSourceForm />
+            <AddSourceForm
+              onSuccess={() => {
+                setSourceFormOpen(false);
+              }}
+              notebook={notebook}
+            />
           </DialogContent>
         </Dialog>
+      </div>
+      <div className="flex flex-col space-y-2">
+        {notebook.sources.map((source) => (
+          <div key={source.id}>{source.title}</div>
+        ))}
       </div>
     </div>
   );
@@ -88,28 +103,33 @@ interface NotebookProps {
 }
 const Notebook: React.FC<NotebookProps> = ({ notebook }) => {
   const notebookData = use(notebook);
+  if (!notebookData) {
+    return <div>Loading...</div>;
+  }
   return (
-    <div className="flex flex-col min-h-screen p-2 space-y-2 ">
-      {/* Logo */}
-      <Link href="/">
-        <div className="flex flex-row">
-          <h1 className="text-md font-sans">Notebook</h1>
-          <span className="text-md font-sans text-muted-foreground">/</span>
-          <h1 className="text-md font-sans">{notebookData?.title}</h1>
+    <NotebookProvider notebook={notebookData}>
+      <div className="flex flex-col min-h-screen p-2 space-y-2 ">
+        {/* Logo */}
+        <Link href="/">
+          <div className="flex flex-row">
+            <h1 className="text-md font-sans">Notebook</h1>
+            <span className="text-md font-sans text-muted-foreground">/</span>
+            <h1 className="text-md font-sans">{notebookData?.title}</h1>
+          </div>
+        </Link>
+        <div className="flex flex-row justify-between space-x-10 min-h-max flex-grow font-sans">
+          <Tab title="Sources">
+            <Sources />
+          </Tab>
+          <Tab title="Chat">
+            <Chat />
+          </Tab>
+          <Tab title="Studio">
+            <Studio />
+          </Tab>
         </div>
-      </Link>
-      <div className="flex flex-row justify-between space-x-10 min-h-max flex-grow font-sans">
-        <Tab title="Sources">
-          <Sources />
-        </Tab>
-        <Tab title="Chat">
-          <Chat />
-        </Tab>
-        <Tab title="Studio">
-          <Studio />
-        </Tab>
       </div>
-    </div>
+    </NotebookProvider>
   );
 };
 

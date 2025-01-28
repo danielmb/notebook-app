@@ -4,7 +4,7 @@ import {
   getNotebooks,
   getNotebookState,
   newNotebook,
-} from './notebook-actions';
+} from '../server/notebook';
 import { NotebookViewTypeToggle } from './notebook-view-type-toggle';
 import { NotebookGrid } from './notebook-grid';
 

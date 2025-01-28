@@ -2,7 +2,7 @@
 import { GridIcon, ListIcon, CheckIcon } from 'lucide-react';
 import React from 'react';
 import { Button } from './ui/button';
-import { getNotebookState, setNotebookState } from './notebook-actions';
+import { getNotebookState, setNotebookState } from '../server/notebook';
 import { NoteBookState } from '@/types/notebook';
 interface NotebookViewTypeToggleProps {
   notebookState: NoteBookState;
