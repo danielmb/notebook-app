@@ -5,6 +5,7 @@ import type { Notebook } from './notebook';
 import { revalidatePath } from 'next/cache';
 import { ZodError } from 'zod';
 import { Source } from '@prisma/client';
+import { generateTags, summarizeSource } from './ai';
 
 type CreateSourceState =
   | {
@@ -41,6 +42,8 @@ export const createSource = async (
       },
     });
     revalidatePath(`/notebook/${notebookId}`);
+    await summarizeSource(source.id);
+    await generateTags(source.id);
     return {
       status: 'success',
       data: source,
@@ -64,4 +67,14 @@ export const createSource = async (
       message: 'An unknown error occurred',
     };
   }
+};
+
+export const getSource = async (id: Source['id']) => {
+  if (!id) return null;
+  const source = await prisma.source.findUnique({
+    where: {
+      id,
+    },
+  });
+  return source;
 };

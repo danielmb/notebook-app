@@ -2,9 +2,16 @@
 
 import { createContext, useContext } from 'react';
 import { GetNotebookRes } from '@/types/notebook';
+import { Source } from '@prisma/client';
+import { GetSourceRes } from '@/types/source';
 
 interface NotebookContextType {
   notebook: GetNotebookRes;
+  source: GetSourceRes;
+  selectedSourceId: Source['id'] | null;
+  setSelectedSourceId: React.Dispatch<
+    React.SetStateAction<Source['id'] | null>
+  >;
 }
 
 export const NotebookContext = createContext<NotebookContextType | undefined>(
@@ -20,14 +27,26 @@ export const useNotebook = () => {
 };
 
 interface NotebookProviderProps {
+  source: GetSourceRes;
   notebook: GetNotebookRes;
+  selectedSourceId: Source['id'] | null;
+  setSelectedSourceId: React.Dispatch<
+    React.SetStateAction<Source['id'] | null>
+  >;
 }
 
 export const NotebookProvider: React.FC<
   React.PropsWithChildren<NotebookProviderProps>
-> = ({ notebook, children }) => {
+> = ({ notebook, children, selectedSourceId, setSelectedSourceId, source }) => {
   return (
-    <NotebookContext.Provider value={{ notebook }}>
+    <NotebookContext.Provider
+      value={{
+        source,
+        notebook,
+        selectedSourceId,
+        setSelectedSourceId,
+      }}
+    >
       {children}
     </NotebookContext.Provider>
   );

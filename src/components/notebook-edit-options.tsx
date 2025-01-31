@@ -1,7 +1,13 @@
 'use client';
 
 import React from 'react';
-import { Command, CommandGroup, CommandItem, CommandList } from './ui/command';
+import {
+  Command,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from './ui/command';
 import { MoreVerticalIcon } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 import {
@@ -23,9 +29,11 @@ interface NotebookEditOptionsProps {
 export const NotebookEditOptions: React.FC<NotebookEditOptionsProps> = ({
   notebook,
 }) => {
+  const commandRef = React.useRef<HTMLDivElement>(null);
   const [editNotebook, setEditNotebook] = React.useState(false);
   const updateNotebookWithId = updateNotebook.bind(null, notebook.id);
   const confirm = useConfirm();
+
   return (
     <>
       <Dialog open={editNotebook} onOpenChange={setEditNotebook}>
@@ -53,15 +61,25 @@ export const NotebookEditOptions: React.FC<NotebookEditOptionsProps> = ({
           </form>
         </DialogContent>
       </Dialog>
-      <Popover>
+      <Popover
+        onOpenChange={(open) => {
+          setTimeout(() => {
+            if (open) {
+              commandRef.current?.focus();
+            }
+          }, 50);
+        }}
+      >
         <PopoverTrigger>
           <MoreVerticalIcon className="h-5 w-5" />
         </PopoverTrigger>
         <PopoverContent>
-          <Command>
+          <Command ref={commandRef}>
             <CommandList>
+              <CommandInput />
               <CommandGroup>
                 <CommandItem
+                  autoFocus
                   onSelect={() => {
                     setEditNotebook(true);
                   }}

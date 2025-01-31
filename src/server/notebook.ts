@@ -2,24 +2,27 @@
 import { prisma } from '@/lib/db';
 import type { Notebook as PrismaNotebook } from '@prisma/client';
 import { NoteBookState, NoteBookStateSchema } from '@/types/notebook';
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag, unstable_cache } from 'next/cache';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { cache } from 'react';
 import { z } from 'zod';
 
-export const getNotebook = async (id: PrismaNotebook['id']) => {
-  const notebook = await prisma.notebook.findUnique({
-    where: {
-      id,
-    },
+export const getNotebook = unstable_cache(
+  async (id: PrismaNotebook['id']) => {
+    const notebook = await prisma.notebook.findUnique({
+      where: {
+        id,
+      },
 
-    include: {
-      sources: true,
-    },
-  });
-  return notebook;
-};
+      include: {
+        sources: true,
+      },
+    });
+    return notebook;
+  },
+  ['notebook'],
+  { tags: ['notebook'] },
+);
 
 export const getNotebookState = async () => {
   const cookieStore = await cookies();
@@ -39,10 +42,14 @@ export const setNotebookState = async (state: NoteBookState) => {
   cookieStore.set('notebookState', JSON.stringify(state));
 };
 
-export const getNotebooks = cache(async () => {
-  const notebooks = await prisma.notebook.findMany();
-  return notebooks;
-});
+export const getNotebooks = unstable_cache(
+  async () => {
+    const notebooks = await prisma.notebook.findMany();
+    return notebooks;
+  },
+  ['notebooks'],
+  { tags: ['notebooks'] },
+);
 export type Notebook = Awaited<ReturnType<typeof getNotebooks>>[0];
 
 export const newNotebook = async () => {
@@ -51,6 +58,7 @@ export const newNotebook = async () => {
       title: 'Untitled notebook',
     },
   });
+  revalidateTag('notebooks');
   redirect(`/notebook/${createdNotebook.id}`);
 };
 
@@ -68,7 +76,8 @@ export const updateNotebook = async (
     },
   });
   revalidatePath(`/notebook/${id}`);
-  revalidatePath(`/`);
+  // revalidatePath(`/`);
+  revalidateTag('notebooks');
 };
 
 export const deleteNotebook = async (id: Notebook['id']) => {
@@ -77,5 +86,6 @@ export const deleteNotebook = async (id: Notebook['id']) => {
       id,
     },
   });
-  revalidatePath(`/`);
+  // revalidatePath(`/`);
+  revalidateTag('notebooks');
 };

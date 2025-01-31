@@ -3,7 +3,7 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import { ThemeProvider } from './theme-provider';
 import { AlertDialogProvider } from '@/components/alert-dialog-provider';
-
+import { NuqsAdapter } from 'nuqs/adapters/next/app';
 const geistSans = Geist({
   variable: '--font-geist-sans',
   subsets: ['latin'],
@@ -38,7 +38,9 @@ export default function RootLayout({
           disableTransitionOnChange
           storageKey="theme"
         >
-          <AlertDialogProvider>{children}</AlertDialogProvider>
+          <NuqsAdapter>
+            <AlertDialogProvider>{children}</AlertDialogProvider>
+          </NuqsAdapter>
         </ThemeProvider>
       </body>
     </html>

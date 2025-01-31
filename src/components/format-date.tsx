@@ -20,5 +20,8 @@ export function FormatDate({ date }: FormatDateProps) {
     return new Intl.DateTimeFormat(usersLocale, { dateStyle: 'medium' });
   }, []);
 
+  {
+    console.log(typeof date);
+  }
   return <>{intl.format(date)}</>;
 }

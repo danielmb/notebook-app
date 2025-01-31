@@ -64,7 +64,7 @@ export const NotebookGrid = ({ notebooks }: NotebookGridProps) => {
               <CardTitle>{notebook.title}</CardTitle>
             </Link>
             {/* {formatDate(notebook.createdAt)} */}
-            <FormatDate date={notebook.createdAt} />
+            <FormatDate date={new Date(notebook.createdAt)} />
           </CardFooter>
         </Card>
         // </Link>

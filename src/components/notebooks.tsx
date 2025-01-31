@@ -24,9 +24,16 @@ const Notebooks = async () => {
         {/* {notebooks.map((notebook) => (
           <div key={notebook.id}>{notebook.title}</div>
         ))} */}
-        {notebookState.viewtype === 'grid' ? (
+        {notebookState.viewtype === 'grid' && (
           <NotebookGrid notebooks={notebooks} />
-        ) : null}
+        )}
+        {notebookState.viewtype === 'list' && (
+          <div>
+            {notebooks.map((notebook) => (
+              <div key={notebook.id}>{notebook.title}</div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

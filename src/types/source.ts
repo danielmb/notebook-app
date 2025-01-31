@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import type { getSource } from '@/server/source';
 
 export const createSourceSchema = z.object({
   title: z.string().min(1).max(255),
@@ -6,3 +7,5 @@ export const createSourceSchema = z.object({
 });
 
 export type CreateSource = z.infer<typeof createSourceSchema>;
+
+export type GetSourceRes = Awaited<ReturnType<typeof getSource>>;
